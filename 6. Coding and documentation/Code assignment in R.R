@@ -1,6 +1,6 @@
 
 # Sets the path to the parent directory of RR classes
-setwd("Z:\\File folders\\Teaching\\Reproducible Research\\2023\\Repository\\RRcourse2023\\6. Coding and documentation")
+setwd("C:\\Users\\isisl\\OneDrive\\Desktop\\RRcourse\\RRcourse2023\\6. Coding and documentation")
 
 #   Import data from the O*NET database, at ISCO-08 occupation level.
 # The original data uses a version of SOC classification, but the data we load here
@@ -16,6 +16,7 @@ task_data = read.csv("Data\\onet_tasks.csv")
 # read employment data from Eurostat
 # These datasets include quarterly information on the number of workers in specific
 # 1-digit ISCO occupation categories. (Check here for details: https://www.ilo.org/public/english/bureau/stat/isco/isco08/)
+library(dplyr)
 library(readxl)                     
 
 isco1 <- read_excel("Data\\Eurostat_employment_isco.xlsx", sheet="ISCO1")
@@ -47,6 +48,7 @@ isco7$ISCO <- 7
 isco8$ISCO <- 8
 isco9$ISCO <- 9
 
+sum(isco1$Belgium)
 # and this gives us one large file with employment in all occupations.
 all_data <- rbind(isco1, isco2, isco3, isco4, isco5, isco6, isco7, isco8, isco9)
 
@@ -56,10 +58,27 @@ all_data$total_Belgium <- c(total_Belgium, total_Belgium, total_Belgium, total_B
 all_data$total_Spain <- c(total_Spain, total_Spain, total_Spain, total_Spain, total_Spain, total_Spain, total_Spain, total_Spain, total_Spain) 
 all_data$total_Poland <- c(total_Poland, total_Poland, total_Poland, total_Poland, total_Poland, total_Poland, total_Poland, total_Poland, total_Poland) 
 
+
 # And this will give us shares of each occupation among all workers in a period-country
 all_data$share_Belgium = all_data$Belgium/all_data$total_Belgium
 all_data$share_Spain = all_data$Spain/all_data$total_Spain
 all_data$share_Poland = all_data$Poland/all_data$total_Poland
+
+# create subset of data for year 2020
+data_2020<-all_data %>%
+  filter(str_starts(TIME, "2020"))
+
+# plotting
+library(ggplot2)
+
+ggplot(data_2020, aes(x = TIME)) +
+  geom_bar(aes(y = share_Belgium), stat = "identity", fill = "black") +
+  geom_bar(aes(y = share_Poland), stat = "identity", fill = "red") +
+  geom_bar(aes(y = share_Spain), stat = "identity", fill = "orange") +
+  labs(x = "Period", y = "Share", fill = NULL) +
+  theme_minimal() +
+  scale_y_continuous(limits = c(0, max(data_2020[, c("share_Belgium", "share_Spain", "share_Poland")]) * 0.3))
+
 
 # Now let's look at the task data. We want the first digit of the ISCO variable only
 library(stringr)
@@ -92,7 +111,7 @@ combined <- left_join(all_data, aggdata, by = c("ISCO" = "isco08_1dig"))
 # for each country. Standardisation -> getting the mean to 0 and std. dev. to 1.
 # Let's do this for each of the variables that interests us:
 
-#install.packages("Hmisc")
+# install.packages("Hmisc")
 library(Hmisc)
 
 # first task item
