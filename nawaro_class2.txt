@@ -1,0 +1,115 @@
+i_islamov@reproducible-research:~$ ps aux | grep cpu
+root          10  0.0  0.0      0     0 ?        I<   07:56   0:00 [mm_percpu_wq]
+root          18  0.0  0.0      0     0 ?        S    07:56   0:00 [cpuhp/0]
+root          19  0.0  0.0      0     0 ?        S    07:56   0:00 [cpuhp/1]
+i_islam+    1448  0.0  0.2   7004  2236 pts/1    R+   08:47   0:00 grep --color=auto cpu
+i_islamov@reproducible-research:~$ sudo tail -3/var/log/syslog
+tail: option used in invalid context -- 3
+i_islamov@reproducible-research:~$ sudo tail -3 /var/log/syslog
+Apr 19 08:47:00 reproducible-research google_guest_agent[546]: Updating keys for user i_islamov.
+Apr 19 08:47:00 reproducible-research systemd[1]: Started Session 4 of User i_islamov.
+Apr 19 08:47:01 reproducible-research google_guest_agent[546]: 2023/04/19 08:47:01 logging client: rpc error: code = PermissionDenied desc = Cloud Logging API has not been used in project 768357807525 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/logging.googleapis.com/overview?project=768357807525 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+i_islamov@reproducible-research:~$ cd /etc
+i_islamov@reproducible-research:/etc$ ls
+NetworkManager                 dpkg                libaudit.conf        os-release              skel
+PackageKit                     e2scrub.conf        libblockdev          overlayroot.conf        sos
+X11                            ec2_version         libnl-3              overlayroot.local.conf  ssh
+adduser.conf                   environment         locale.alias         pam.conf                ssl
+alternatives                   ethertypes          locale.gen           pam.d                   subgid
+apparmor                       fstab               localtime            passwd                  subgid-
+apparmor.d                     fuse.conf           logcheck             passwd-                 subuid
+apport                         gai.conf            login.defs           perl                    subuid-
+apt                            google_instance_id  logrotate.conf       pm                      sudo.conf
+bash.bashrc                    groff               logrotate.d          polkit-1                sudo_logsrvd.conf
+bash_completion                group               lsb-release          pollinate               sudoers
+bash_completion.d              group-              lvm                  ppp                     sudoers.d
+bindresvport.blacklist         grub.d              machine-id           profile                 sysctl.conf
+binfmt.d                       gshadow             magic                profile.d               sysctl.d
+boto.cfg                       gshadow-            magic.mime           protocols               systemd
+byobu                          gss                 manpath.config       python3                 terminfo
+ca-certificates                hdparm.conf         mdadm                python3.10              timezone
+ca-certificates.conf           host.conf           mime.types           rc0.d                   tmpfiles.d
+ca-certificates.conf.dpkg-old  hostname            mke2fs.conf          rc1.d                   ubuntu-advantage
+chrony                         hosts               modprobe.d           rc2.d                   ucf.conf
+cloud                          hosts.allow         modules              rc3.d                   udev
+console-setup                  hosts.deny          modules-load.d       rc4.d                   ufw
+cron.d                         init.d              mtab                 rc5.d                   update-manager
+cron.daily                     initramfs-tools     multipath            rc6.d                   update-motd.d
+cron.hourly                    inputrc             multipath.conf       rcS.d                   update-notifier
+cron.monthly                   iproute2            nanorc               resolv.conf             usb_modeswitch.conf
+cron.weekly                    iscsi               needrestart          rmt                     usb_modeswitch.d
+crontab                        issue               netconfig            rpc                     vim
+cryptsetup-initramfs           issue.net           netplan              rsyslog.conf            vmware-tools
+crypttab                       kernel              network              rsyslog.d               vtrgb
+dbus-1                         kernel-img.conf     networkd-dispatcher  screenrc                wgetrc
+debconf.conf                   landscape           networks             security                xattr.conf
+debian_version                 ld.so.cache         newt                 selinux                 xdg
+default                        ld.so.conf          nftables.conf        services                zsh_command_not_found
+deluser.conf                   ld.so.conf.d        nsswitch.conf        shadow
+depmod.d                       ldap                nvme                 shadow-
+dhcp                           legal               opt                  shells
+i_islamov@reproducible-research:/etc$ cd ..
+i_islamov@reproducible-research:/$ cd $(find /etc -type d -exec test -r '()' \; -print -quit)
+find: ‘/etc/multipath’: Permission denied
+find: ‘/etc/ssl/private’: Permission denied
+find: ‘/etc/sudoers.d’: Permission denied
+find: ‘/etc/polkit-1/localauthority’: Permission denied
+i_islamov@reproducible-research:~$ cd $(find /etc -type d -exec test -r {}' \; -print -quit)
+> 
+> ^C
+i_islamov@reproducible-research:~$ cd $(find /etc -type d -exec test -r '{}' \; -print -quit)
+i_islamov@reproducible-research:/etc$ cd $(find /etc -type d -exec test -r '{}' \; -print -quit)
+i_islamov@reproducible-research:/etc$ ls
+NetworkManager                 dpkg                libaudit.conf        os-release              skel
+PackageKit                     e2scrub.conf        libblockdev          overlayroot.conf        sos
+X11                            ec2_version         libnl-3              overlayroot.local.conf  ssh
+adduser.conf                   environment         locale.alias         pam.conf                ssl
+alternatives                   ethertypes          locale.gen           pam.d                   subgid
+apparmor                       fstab               localtime            passwd                  subgid-
+apparmor.d                     fuse.conf           logcheck             passwd-                 subuid
+apport                         gai.conf            login.defs           perl                    subuid-
+apt                            google_instance_id  logrotate.conf       pm                      sudo.conf
+bash.bashrc                    groff               logrotate.d          polkit-1                sudo_logsrvd.conf
+bash_completion                group               lsb-release          pollinate               sudoers
+bash_completion.d              group-              lvm                  ppp                     sudoers.d
+bindresvport.blacklist         grub.d              machine-id           profile                 sysctl.conf
+binfmt.d                       gshadow             magic                profile.d               sysctl.d
+boto.cfg                       gshadow-            magic.mime           protocols               systemd
+byobu                          gss                 manpath.config       python3                 terminfo
+ca-certificates                hdparm.conf         mdadm                python3.10              timezone
+ca-certificates.conf           host.conf           mime.types           rc0.d                   tmpfiles.d
+ca-certificates.conf.dpkg-old  hostname            mke2fs.conf          rc1.d                   ubuntu-advantage
+chrony                         hosts               modprobe.d           rc2.d                   ucf.conf
+cloud                          hosts.allow         modules              rc3.d                   udev
+console-setup                  hosts.deny          modules-load.d       rc4.d                   ufw
+cron.d                         init.d              mtab                 rc5.d                   update-manager
+cron.daily                     initramfs-tools     multipath            rc6.d                   update-motd.d
+cron.hourly                    inputrc             multipath.conf       rcS.d                   update-notifier
+cron.monthly                   iproute2            nanorc               resolv.conf             usb_modeswitch.conf
+cron.weekly                    iscsi               needrestart          rmt                     usb_modeswitch.d
+crontab                        issue               netconfig            rpc                     vim
+cryptsetup-initramfs           issue.net           netplan              rsyslog.conf            vmware-tools
+crypttab                       kernel              network              rsyslog.d               vtrgb
+dbus-1                         kernel-img.conf     networkd-dispatcher  screenrc                wgetrc
+debconf.conf                   landscape           networks             security                xattr.conf
+debian_version                 ld.so.cache         newt                 selinux                 xdg
+default                        ld.so.conf          nftables.conf        services                zsh_command_not_found
+deluser.conf                   ld.so.conf.d        nsswitch.conf        shadow
+depmod.d                       ldap                nvme                 shadow-
+dhcp                           legal               opt                  shells
+i_islamov@reproducible-research:/etc$ cd apparmor
+i_islamov@reproducible-research:/etc/apparmor$ pwd
+/etc/apparmor
+i_islamov@reproducible-research:/etc/apparmor$ tail -n 3 syslog
+tail: cannot open 'syslog' for reading: No such file or directory
+i_islamov@reproducible-research:/etc/apparmor$ ls
+init  parser.conf
+i_islamov@reproducible-research:/etc/apparmor$ tail -n 3 parser.conf
+
+## Pin older policy to the 5.4 kernel abi + out of tree network and af_unix
+policy-features=/etc/apparmor.d/abi/kernel-5.4-outoftree-network
+i_islamov@reproducible-research:/etc/apparmor$ head -n 3 parser.conf
+# parser.conf is a global AppArmor config file for the apparmor_parser
+#
+# It can be used to specify the default options for the parser, which
+i_islamov@reproducible-research:/etc/apparmor$ 
