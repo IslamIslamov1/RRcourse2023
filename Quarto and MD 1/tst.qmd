@@ -1,0 +1,71 @@
+---
+title: "Assignment_quarto"
+author: "Islam Islamov"
+format: html
+editor: visual
+---
+
+## Game of Thrones
+
+***Game of Thrones*** is an American [fantasy](https://en.wikipedia.org/wiki/Fantasy_television "Fantasy television") [drama](https://en.wikipedia.org/wiki/Drama_(film_and_television) "Drama (film and television)") television series created by [*David Benioff*](https://en.wikipedia.org/wiki/David_Benioff "David Benioff") and [*D. B. Weiss*](https://en.wikipedia.org/wiki/D._B._Weiss "D. B. Weiss") for [*HBO*](https://en.wikipedia.org/wiki/HBO "HBO"). It is an adaptation of [*A Song of Ice and Fire*](https://en.wikipedia.org/wiki/A_Song_of_Ice_and_Fire "A Song of Ice and Fire"), a series of fantasy novels by [*George R. R. Martin*](https://en.wikipedia.org/wiki/George_R._R._Martin "George R. R. Martin"), the first of which is [*A Game of Thrones*](https://en.wikipedia.org/wiki/A_Game_of_Thrones "A Game of Thrones"). The show was shot in the United Kingdom, Canada, Croatia, Iceland, Malta, Morocco, and Spain. It premiered on HBO in the United States on April 17, 2011, and concluded on May 19, 2019, with 73 episodes broadcast over eight seasons.
+
+Set on the fictional continents of *Westeros and Essos*, *Game of Thrones* has a large [ensemble cast](https://en.wikipedia.org/wiki/Ensemble_cast "Ensemble cast") and follows several [story arcs](https://en.wikipedia.org/wiki/Story_arc "Story arc") throughout the course of the show. The first major arc concerns the [*Iron Throne*](https://en.wikipedia.org/wiki/Iron_Throne_(A_Song_of_Ice_and_Fire) "Iron Throne (A Song of Ice and Fire)") of the [*Seven Kingdoms*](https://en.wikipedia.org/wiki/World_of_A_Song_of_Ice_and_Fire#Seven_Kingdoms "World of A Song of Ice and Fire") of *Westeros* through a web of political conflicts among the noble families either vying to claim the throne or fighting for independence from whoever sits on it. The second focuses on the last descendant of the realm's deposed ruling dynasty, who has been exiled to *Essos* and is plotting to return and reclaim the throne. The third follows the *Night's Watch*, a military order defending the realm against threats from beyond Westeros's northern border.
+
+![Daenerys.](wp6294322.jpg)
+
+## Some Graphs based on ratings of each season
+
+### Summary of basic statistics :
+
+```{r summmary , echo = FALSE, message = FALSE}
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+
+got <- data.frame(read.csv("Game_of_Thrones.csv"))
+
+got$Original.Air.Date <- dmy(got$Original.Air.Date)
+
+summary(got)
+```
+
+### Viewership in US  over time :
+
+```{r fifth , echo = FALSE, message = FALSE}
+
+got_yearly <- got %>%
+  mutate(year = year(Original.Air.Date)) %>%
+  group_by(year) %>%
+  summarise(total_views = sum(U.S..Viewers..Millions.))
+
+ggplot(data = got_yearly, aes(x = year, y = total_views)) +
+  geom_line() +
+  labs(x = "Year", y = "Total viewership") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 5))
+
+```
+
+### Viewership in US over time by each season :
+
+```{r sixth , echo = FALSE, message = FALSE}
+
+df_summary <- got %>%
+  group_by(Season) %>%
+  summarise(total_viewership = sum(U.S..Viewers..Millions.))
+
+ggplot(data = df_summary, aes(x = Season, y = total_viewership)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = total_viewership), vjust = -0.5) +
+  labs(x = "Season", y = "Total Viewership")
+
+```
+
+### A short overview of first graph :
+
+#### As we can observe from graph of total viewership over time by each year, it is very obvious that the show grew in popularity over time. With starting position of less than 15 million of views and ending with total of more than 70 million, maximizing at more than 75 million between periods from 2015 to 2016.
+
+### A short overview of second graph :
+
+#### Similar situation is observed in second graph of viewership by seasons, we can see that between season 5 and 7 the viewership hit its peak of popularity with more than 76.88 millions viewers in total( period between 2015 and 2016).
+
+#### 
