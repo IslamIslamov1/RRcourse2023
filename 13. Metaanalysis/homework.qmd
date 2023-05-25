@@ -1,0 +1,177 @@
+---
+title: "Metaanalysis in R"
+author: "Wojciech Hardy"
+date: today
+format:  
+  html:
+    theme: lumen
+    toc: true
+    toc_float: true
+title-block-banner: true
+execute:
+  echo: fenced
+---
+
+```{r, echo = FALSE}
+#| label = "setup",
+#| include = FALSE
+library(meta)
+library(metafor)
+library(dplyr)
+#setwd("")
+```
+
+# ASSIGNMENT 
+
+1) Import the data from the `data\metaanalysis_data.xlsx` file. The data come from the meta-analysis study: [Todd et al., 2017 - Sex differences in children's toy preferences: A systematic review, meta‐regression, and meta‐analysis](https://onlinelibrary.wiley.com/doi/full/10.1002/icd.2064)
+
+The study looks at various studies of children choosing what kind of toys they play with (stereotypically 'boy-toys' or stereotypically 'girl-toys'). Mean times (in seconds) of playing are recorded, along with sample sizes and standard errors (for boys playing with each kind of toys and for girls playing with each kind of toys).
+
+There's also information about the studies (e.g. year) and a bit about quality.
+
+Here's authors' descriptions to the data:
+
+> Neutral toys (1 = neutral toys included; 2 = neutral toys not included); Parent present (1 = absent; 2 = minimal interaction; 3 = moderate or full interaction); Setting = location of study (1 = home; 2 = laboratory; 3 = nursery); Country = gender inequality index, a measure of how gender egalitarian the country was at the time the study took place.
+
+> Note. Quality is assessed using Newcastle–Ottawa Quality Assessment Scale criteria adapted for this study. A star indicates that the study fulfilled this criterion; an X indicates that the
+study did not fulfil this criterion. 
+Case definition adequate: clear justification for the gendered nature of a toy, for example, based on research. 
+Representativeness of cases: recruitment of consecutive participants. 
+Selection of controls: whether boys and girls were comparable in terms of social background.
+Parental opinion: whether parents' views on gender were measured.
+Comparability of both groups: the toys were comparable (in size, shape, etc.) and if the boys and girls were comparable in age. 
+Ascertainment of behaviour: Play behaviour was clearly defined. 
+Same ascertainment method for both groups: The measurement of the outcome (time spent playing with toy) was clearly defined. 
+Nonresponse rate: whether either nonuptake or dropout rates reported.
+
+2) Experiment using what you've learned:
+
+a) combine the effects
+b) create a funnel plot (what do you see?)
+c) check if methods / quality affect the results
+d) does author gender affect it?
+
+Load data first 
+```{r, echo = FALSE}
+data <- readxl::read_excel("data/metaanalysis_data.xlsx")
+head(data)
+str(data)
+```
+
+# • Random effects = TRUE • 
+```{r, echo = FALSE}
+m.raw <- metacont(n.e = N_boys,
+                  mean.e = Mean_boys_play_male,
+                  sd.e = SD_boys_play_male,
+                  n.c = N_girls,
+                  mean.c = Mean_girls_play_female,
+                  sd.c = SD_girls_play_female,
+                  data = data,
+                  studlab = paste(Study),
+                  fixed = TRUE,
+                  random = TRUE,
+)
+m.raw
+```
+
+# Funnel plot: 
+```{r, echo = FALSE}
+contour_levels <- c(0.90, 0.95, 0.99)
+contour_colors <- c("darkblue", "blue", "lightblue")
+funnel(m.raw, contour = contour_levels, col.contour = contour_colors)
+legend("topright", c("p < 0.10", "p < 0.05", "p < 0.01"), bty = "n", fill = contour_colors)
+```
+From funnel plot, we see that most of them are around medium standard errors and scatter around zero difference, which is true effect, and this plot is more or less symmetric, which demonstrates that publication bias is not present regarding this setting.
+
+
+```{r, echo = FALSE}
+m.raw %>% forest(sortvar=TE)
+```
+
+# Output 1 shows us that most of the data points are in the center meaning that they are not that much far away from each other, as well as meaning that their standard errors are kind of small in most cases. 
+
+# Check if methods affect results : 
+```{r, echo = FALSE}
+m.raw %>% metareg(`Parental opinion` + `Representativeness of cases`)
+```
+
+# Check if gender affects the results :
+```{r, echo = FALSE}
+m.raw %>% metareg(`Female authors` + `Male authors`)
+```
+
+## We can see from two other outputs that Parents opinion has some affect, even we could say significant enough, and when it comes to last output I would say that from what I see there is no difference if it is a woman or a man is the author, it does not have any effect on the final results.
+
+
+# • Fixed effects = TRUE •
+```{r, echo = FALSE}
+m.raw.fe <- metacont(n.e = N_boys,
+                  mean.e = Mean_boys_play_male,
+                  sd.e = SD_boys_play_male,
+                  n.c = N_girls,
+                  mean.c = Mean_girls_play_female,
+                  sd.c = SD_girls_play_female,
+                  data = data,
+                  studlab = paste(Study),
+                  fixed = TRUE,
+                  random = FALSE,
+)
+m.raw.fe
+```
+# Funnel plot: 
+```{r, echo = FALSE}
+contour_levels <- c(0.90, 0.95, 0.99)
+contour_colors <- c("darkblue", "blue", "lightblue")
+funnel(m.raw.fe, contour = contour_levels, col.contour = contour_colors)
+legend("topright", c("p < 0.10", "p < 0.05", "p < 0.01"), bty = "n", fill = contour_colors)
+```
+
+```{r, echo = FALSE}
+m.raw.fe %>% forest(sortvar=TE)
+```
+
+# Check if methods affect results : 
+```{r, echo = FALSE}
+m.raw.fe %>% metareg(`Parental opinion` + `Representativeness of cases`)
+```
+
+# Check if gender affects the results :
+```{r, echo = FALSE}
+m.raw.fe %>% metareg(`Female authors` + `Male authors`)
+```
+
+
+
+I am not sure what youy means by methods, but if it means to use either random effects or fixed then it means that the results would not change I also tried implementing metagen however because I did not understand with what method were the variables(columns) selected, so I am sorry if I conducted it wrong : 
+
+# Fixed Effects
+```{r , echo = FALSE} 
+m_e <- metagen(TE=`Setting`,
+             seTE=Mean_boys_play_male,
+             data=data,
+             studlab=paste(Study),
+             comb.fixed = TRUE,
+             comb.random = TRUE)
+m_e
+```
+
+# Random effects
+```{r , echo = FALSE} 
+m_f <- metagen(TE=`Setting`,
+             seTE=Mean_boys_play_male,
+             data=data,
+             studlab=paste(Study),
+             comb.fixed = TRUE,
+             comb.random = FALSE)
+m_f
+```
+
+Again I am not sure if it is correct way but from results we can see that method(fixed/random) does not have effect on results.
+
+# RESULTS : 
+
+### 1. Funel plot shows us that most observations are not far from each other and that most of them are really close to each other with the exception of some outliers.
+
+### 2. From what I understand by methods we mean random/fixed effects and I checked it both with metacont and metagen and both showed that the results are not that much differen almost same in some cases. 
+
+### 3.Gender has no effect on the results more or less. 
